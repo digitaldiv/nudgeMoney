@@ -11,13 +11,13 @@ This incorporates :
 ## Our Goals
 
 We want to cerate a system that 
-a. allows users to analyze patterns of spending, saving and investing. 
-b. Understand the short, medium and long term impact
-c. Discover potential changes in patterns to accomplish favorable outcomes
+ - a. allows users to analyze patterns of spending, saving and investing. 
+ - b. Understand the short, medium and long term impact
+ - c. Discover potential changes in patterns to accomplish favorable outcomes
 
 ## Our Tasks
 This incorporatessimulations with real-world data that  :
-- Demonstarte Time-value of money
-- Demonstarte compunding effects of minor changes
+ - Demonstarte Time-value of money
+ - Demonstarte compunding effects of minor changes
  
 
