@@ -1,0 +1,120 @@
+{% extends "baseSemantic.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="ui modal center">
+    <div class="ui center container">
+        <i class="close icon"></i>
+        <div class="header">
+            Add a stock to portfolio
+        </div>
+        <form class="ui form">
+                    <div class="field">
+                        <label>Stock</label>
+                        <input type="text" name="ticker" placeholder="AAPL">
+                    </div>
+                    <div class="field">
+                        <label>Date Purchased : </label>
+                        <input type="text" name="datepurchased" placeholder="01/01/2001">
+                    </div>
+                    <div class="field">
+                        <label>Volume: </label>
+                        <input type="text" name="volume" placeholder="100">
+                    </div>
+                
+                    <button class="ui button" type="submit">Add</button>
+                </form>
+
+        <div class="actions">
+            <div class="ui black deny button">
+            Nope
+            </div>
+            <div class="ui positive right labeled icon button">
+            Add to portfolio
+            <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<h2 class="ui header">Stock Portfolio</h2>
+
+<button onclick="$('.ui.modal').modal('show');" class="circular ui icon button">
+<i class="plus circle icon"></i>
+</button >
+
+<table class="ui selectable celled table">
+  <thead>
+    <tr>
+      <th>Stock</th>
+      <th>Current</th>
+      <th>Date of purchase</th>
+      <th>Volume</th>
+      <th>Price of purchase</th>
+      <th>Gain/Loss</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>AAPL</td>
+      <td>139</td>
+      <td>01/01/2001</td>
+      <td>3000</td>
+      <td>98</td>
+      <td>45,000</td>
+      <td>
+        <button class="circular ui icon button">
+            <i class="edit icon"></i>
+        </button>
+        <button class="circular ui icon button">
+            <i class="minus circle icon"></i>
+        </button>
+      </td>
+    </tr>
+    <tr>
+      <td>MSFT</td>
+      <td>139</td>
+      <td>01/01/2001</td>
+      <td>3000</td>
+      <td>98</td>
+      <td>45,000</td>
+      <td>
+        <button class="circular ui icon button">
+            <i class="edit icon"></i>
+        </button>
+        <button class="circular ui icon button">
+            <i class="minus circle icon"></i>
+        </button>
+      </td>
+    </tr>
+
+    <tr>
+      <td>FB</td>
+      <td>139</td>
+      <td>01/01/2001</td>
+      <td>3000</td>
+      <td>98</td>
+      <td>45,000</td>
+      <td>
+        <button class="circular ui icon button">
+            <i class="edit icon"></i>
+        </button>
+        <button class="circular ui icon button">
+           <i class="minus circle icon">-</i>
+        </button>
+      </td>
+    </tr>
+    
+  </tbody>
+</table>
+{% endblock %}

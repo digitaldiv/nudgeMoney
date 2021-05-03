@@ -1,0 +1,21 @@
+/*
+font-family: 'Montserrat', sans-serif;
+font-family: 'Open Sans', sans-serif;
+
+*/
+
+.body {
+    font-family:'Montserrat', sans-serif;
+    font-size: medium;
+}
+
+.header {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: xx-large;
+    font-weight: 900;
+}
+
+.footer {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size:small;
+}
