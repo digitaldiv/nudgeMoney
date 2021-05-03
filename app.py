@@ -39,7 +39,7 @@ def db_create():
 def db_seed_cli():
     dataFile = r'/Users/divpithadia/Downloads/s-and-p-500-companies-financials_zip-2/data/constituents-financials_csv.csv'
     db_seed(dataFile)
-    app.logger.info('Database seeded')
+    app.logger.info('Database seeded with compnay data.')
 
 @app.cli.command('db_history_db')
 def db_history_db():
