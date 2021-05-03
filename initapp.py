@@ -5,29 +5,7 @@ import numpy as np
 import requests as req
 import datetime
 
-def db_seed_test (dFile):
-    fd1=FinanceData (
-        Symbol='ABC',
-        Name='XYZ',
-        Sector='TTTTTTT',
-        Price=1,
-        PricePerEarnings=0,
-        Dividend_Yield=0,
-        EarningsPerShare=0,
-        P52_Week_Low=0,
-        P52_Week_High=0,
-        Market_Cap=0,
-        EBITDA=0,
-        PricePerSales=0,
-        PricePerBook=0,
-        SEC_Filings=0
-    )
-    db.session.add(fd1)
-    db.session.commit()
-
 def db_seed (dataFile):
-    #dataFile = r'/Users/divpithadia/Downloads/s-and-p-500-companies-financials_zip-2/data/constituents-financials_csv.csv'
-   
     df = pd.read_csv(dataFile)
     print( f'Read the file with rows : {df.shape[0]}')
     #print(df)
@@ -58,46 +36,35 @@ def db_seed (dataFile):
         db.session.add(fd1)
         db.session.commit() 
 
-def get_historical_data  ():
+def get_historical_data_files  ():
     all_tickers = FinanceData.query.all()
     #tickers = [ 'COF'] # ,'DIS','SQ','INTC','MSFT','CRM','CMG','NKE','AMD','UA' ]
     for ticker in all_tickers:
         print( f'Getting Data file for {ticker.Symbol}')
-        get_history(ticker.Symbol)
+        get_history_file(ticker.Symbol)
 
+def get_historical_data_db  ():
+    all_tickers = FinanceData.query.all()
+    #tickers = [ 'COF'] # ,'DIS','SQ','INTC','MSFT','CRM','CMG','NKE','AMD','UA' ]
+    for ticker in all_tickers:
+        print( f'Getting Data file for {ticker.Symbol}')
+        get_history_db(ticker.Symbol)
     
-def get_history(ticker):
+def get_history_file(ticker):
     link = (f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1=252374400&period2=1618444800&interval=1d&events=history&crumb=BkT/GAawAXc")
     myfile = req.get(link)
+    myfolder='/Volumes/Div2021/snpdata'
+    open(f'{myfolder}/{ticker}.csv', 'wb').write(myfile.content)
+    
 
-    """     counter = 0
-    for lines in myfile.content:
-        counter+=1
-        if counter > 1:
-            finance_data = line.split(',')
-            trade_date = finance_data[0]
-            y,m,d = trade_date.split('-')
-            new_trade_date = datetime.date(int(y),int(m),int(d))
-            close_price = float(finance_data[4])
-            volume = int(finance_data[6].strip('\n')) """
-
-    open(f'/Volumes/Div2021/snpdata/{ticker}.csv', 'wb').write(myfile.content)
-        # https://query1.finance.yahoo.com/v7/finance/download/DIS?period1=-252374400&period2=1618444800&interval=1d&events=history&includeAdjustedClose=true
-
-
-def get_history2(ticker):
+def get_history_db(ticker):
     link = (f"https://query1.finance.yahoo.com/v7/finance/download/{ticker}?period1=252374400&period2=1618444800&interval=1d&events=history&crumb=BkT/GAawAXc")
     myfile = req.get(link)
-
-    #print(myfile.content)
     lines = myfile.content.decode().split('\n')
-    
-
-    #all_lines = lines.split('\n')
 
     counter = 0
     for line in lines: #myfile.content:
-        print(line)
+        #print(line)
         counter+=1
         if counter > 1:
             finance_data = line.split(',')
