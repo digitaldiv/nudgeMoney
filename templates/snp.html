@@ -1,0 +1,88 @@
+{% extends "baseSemantic.html" %} {% block title %}Index{% endblock %} {% block
+head %} {{ super() }}
+<style type="text/css">
+  .important {
+    color: #336699;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<div class="ui modal center">
+  <div class="ui center container">
+    <i class="close icon"></i>
+    <div class="header">Add a stock to portfolio</div>
+    <form class="ui form">
+      <div class="field">
+        <label>Stock</label>
+        <input type="text" name="ticker" placeholder="AAPL" />
+      </div>
+      <div class="field">
+        <label>Date Purchased : </label>
+        <input type="text" name="datepurchased" placeholder="01/01/2001" />
+      </div>
+      <div class="field">
+        <label>Volume: </label>
+        <input type="text" name="volume" placeholder="100" />
+      </div>
+
+      <button class="ui button" type="submit">Add</button>
+    </form>
+
+    <div class="actions">
+      <div class="ui black deny button">Nope</div>
+      <div class="ui positive right labeled icon button">
+        Add to portfolio
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="ui header">S&P Stocks</h2>
+
+<button onclick="$('.ui.modal').modal('show');" class="circular ui icon button">
+  <i class="plus circle icon"></i>
+</button>
+
+<table class="ui selectable celled table">
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Name</th>
+      <th>Sector</th>
+      <th>Price</th>
+      <th>PricePerEarnings</th>
+      <th>Dividend_Yield</th>
+      <th>EarningsPerShare</th>
+      <th>P52_Week_Low</th>
+      <th>P52_Week_High</th>
+      <th>Market_Cap</th>
+      <th>EBITDA</th>
+      <th>PricePerSales</th>
+      <th>PricePerBook</th>
+      <th>SEC_Filings</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for stock in stocks%}
+
+    <tr>
+      <td>{{ stock.Symbol }}</td>
+      <td>{{ stock.Name }}</td>
+      <td>{{ stock.Sector }}</td>
+      <td>{{ stock.Price }}</td>
+      <td>{{ stock.PricePerEarnings }}</td>
+      <td>{{ stock.Dividend_Yield }}</td>
+      <td>{{ stock.EarningsPerShare }}</td>
+      <td>{{ stock.P52_Week_Low }}</td>
+      <td>{{ stock.P52_Week_High }}</td>
+      <td>{{ stock.Market_Cap }}</td>
+      <td>{{ stock.EBITDA }}</td>
+      <td>{{ stock.PricePerSales }}</td>
+      <td>{{ stock.PricePerBook }}</td>
+      <td>{{ stock.SEC_Filings }}</td>
+    </tr>
+    {%endfor %}
+  </tbody>
+</table>
+{% endblock %}
