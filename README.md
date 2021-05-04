@@ -1,10 +1,10 @@
-# nudgeMoney
+# nudgeMoney :dollar:
 
 ## Our objective
 
 Our objective is to create a system for promoting financial literacy and financial well-being. 
 This incorporates :
-- Financial principles
+- Financial principles  
 - Financial disciplines
 - Financial habits
 
