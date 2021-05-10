@@ -2,8 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
-
-from models.portfolio import db, FinanceData, Stock
+from .models.portfolio import db, FinanceData, Stock, User, Portfolio
 import logging
 
 # ---------------------------
@@ -38,10 +37,30 @@ class FinanceDataSchema(ma.Schema):
 financeDataSchema = FinanceDataSchema()
 financeDataSchema = FinanceDataSchema(many=True)
 
+class UserSchema (ma.Schema):
+    class Meta:
+        fields = ("id","user_name","user_pwd","date_signed","status","user_email","user_phone")
+        #fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss")
+        model = User
+
+userschema = UserSchema ( )
+userschema = UserSchema (many=True)
+
+class PortfolioSchema (ma.Schema):
+    class Meta:
+        #fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss")
+        fields = ("id","portfolio_title","portfolio_desc","date_created","date_updated","date_created","user_id")
+        model = Portfolio
+        include_fk = True
+
+portfolioschema = PortfolioSchema ( )
+portfolioschema = PortfolioSchema (many=True)
+
 class StockSchema (ma.Schema):
     class Meta:
         fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss")
         model = Stock
+        include_fk = True
 
 stockschema = StockSchema ( )
 stockschema = StockSchema (many=True)
