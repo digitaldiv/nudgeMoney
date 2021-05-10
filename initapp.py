@@ -1,6 +1,7 @@
 from models.portfolio import FinanceData, HistoricalData
 import pandas as pd
-from app import db
+# causes circular reference 
+# from app import db
 import numpy as np
 import requests as req
 import datetime
@@ -68,24 +69,26 @@ def get_history_db(ticker):
         counter+=1
         if counter > 1:
             finance_data = line.split(',')
-            trade_date = finance_data[0]
-            y,m,d = trade_date.split('-')
-            new_trade_date = datetime.date(int(y),int(m),int(d))
-            close_price = float(finance_data[4])
-            volume = int(finance_data[6].strip('\n')) 
-
-            hd = HistoricalData (
-                Symbol = ticker,
-                TradeDate = trade_date,
-                OpenPrice = finance_data[1],
-                HiPrice = finance_data[2],
-                LoPrice = finance_data[3],
-                ClosePrice = close_price,
-                AdjClosePrice = finance_data[5],
-                Volume  = volume
-            )
-            db.session.add(hd)
-            db.session.commit()
+            opnp = finance_data[1]
+            if (opnp != 'null'):
+                trade_date = finance_data[0]
+                y,m,d = trade_date.split('-')
+                new_trade_date = datetime.date(int(y),int(m),int(d))
+                close_price = float(finance_data[4])
+                volume = int(finance_data[6].strip('\n')) 
+                #if finance_data[1] is not null)
+                hd = HistoricalData (
+                    Symbol = ticker,
+                    TradeDate = trade_date,
+                    OpenPrice = finance_data[1],
+                    HiPrice = finance_data[2],
+                    LoPrice = finance_data[3],
+                    ClosePrice = close_price,
+                    AdjClosePrice = finance_data[5],
+                    Volume  = volume
+                )
+                db.session.add(hd)
+                db.session.commit()
     #open(f'/Volumes/Div2021/snpdata/{ticker}.csv', 'wb').write(myfile.content)
     # https://query1.finance.yahoo.com/v7/finance/download/DIS?period1=-252374400&period2=1618444800&interval=1d&events=history&includeAdjustedClose=true
 
