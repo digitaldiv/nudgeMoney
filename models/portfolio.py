@@ -13,7 +13,18 @@ class User(db.Model):
     status = Column (String(40), nullable=False)
     user_email = Column(String(40), nullable = False)
     user_phone = Column(String(40), nullable = False)
-    
+    portfolios = db.relationship('Portfolio', backref='user', lazy=True)
+
+class Portfolio (db.Model):
+    __tablename__ = 'Portfolio'
+    id = Column(Integer, primary_key=True)
+    portfolio_title = Column(String(60), nullable = False)
+    portfolio_desc = Column(String(120), nullable = False)
+    date_created = Column(Date, nullable = False)
+    date_updated = Column(Date, nullable = True)
+    date_created = Column(Date, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    stocks = db.relationship('Stock', backref='portfolio', lazy=True)
 
 class Stock(db.Model):
     __tablename__ = 'Stocks'
@@ -26,7 +37,8 @@ class Stock(db.Model):
     latest_price = Column (Float, nullable=False)
     cost_basis = Column (Float, nullable=False)
     gain_loss = Column (Float, nullable=False)
-
+    portfolio_id = db.Column(db.Integer, db.ForeignKey('portfolio.id'),
+        nullable=False)
 
 # Step 3: Create a model
 class FinanceData (db.Model):
