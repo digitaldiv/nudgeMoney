@@ -1,15 +1,14 @@
 from flask import Flask, render_template
-from models.portfolio import db
-from initapp import db_seed, get_historical_data_db, get_historical_data_files
+#from models.portfolio import db, FinanceData
+from .initapp import db_seed, get_historical_data_db, get_historical_data_files, get_history_db
 import logging
-
+from .models.portfolio import db, FinanceData
 
 # ---------------------------
 # App initialization 
 # ---------------------------
-# This 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.config.from_object('config.Config')
 
 # ---------------------------
 # Logging initialization 
@@ -19,8 +18,6 @@ logging.basicConfig(filename='app.log', level=logging.DEBUG)
 # ---------------------------
 # Database initialization 
 # ---------------------------
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///myDB.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root2:password@localhost/nudgeM'
 db.init_app(app)
 
 # ---------------------------
@@ -47,6 +44,12 @@ def db_history_db():
     get_historical_data_db ()
     app.logger.info('Stock history imported into database.')
 
+@app.cli.command('db_history_db_test')
+def db_history_db_test():
+    app.logger.info('Stock history import into database started.')
+    get_history_db('AET')
+    app.logger.info('Stock history imported into database.')
+
 @app.cli.command('db_history_files')
 def db_history_files ():
     app.logger.info('Stock history import into CSV files started.')
@@ -64,6 +67,12 @@ def index():
 @app.route('/portfolio')
 def portfolio():
     return render_template('portfolio.html')
+
+
+@app.route('/snp')
+def snp():
+    lst = db.session.query(FinanceData).all()
+    return render_template('snp.html', stocks = lst )
 
 # ---------------------------
 # Run app   
