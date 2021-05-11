@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
-from .models.portfolio import db, FinanceData, Stock, User, Portfolio
+from models.portfolio import db, FinanceData, Stock, User, Portfolio
 import logging
 
 # ---------------------------
@@ -49,7 +49,7 @@ userschema = UserSchema (many=True)
 class PortfolioSchema (ma.Schema):
     class Meta:
         #fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss")
-        fields = ("id","portfolio_title","portfolio_desc","date_created","date_updated","date_created","user_id")
+        fields = ("id","portfolio_title","portfolio_desc","date_created","date_updated","date_created", "user_id")
         model = Portfolio
         include_fk = True
 
@@ -58,7 +58,7 @@ portfolioschema = PortfolioSchema (many=True)
 
 class StockSchema (ma.Schema):
     class Meta:
-        fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss")
+        fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss", "portfolio_id")
         model = Stock
         include_fk = True
 
@@ -77,6 +77,58 @@ class FinanceDataListResource(Resource):
         return jsonify(financeDataSchema.dump(snpList))
 
 api.add_resource(FinanceDataListResource, '/snpstockslist')
+
+class PortfolioListResource (Resource):
+    def get (self):
+        portfoliolist = Portfolio.query.all ()
+        return jsonify(portfolioschema.dump(portfoliolist)) 
+
+    # Create new portfolio
+    def post(self):
+        print('Adding new Portfolio')
+        app.logger.info(f'Received : {request.json}')
+        app.logger.info(f'Received : {request.get_json()}')
+
+        new_portfolio = Portfolio ( id=request.json["id"],
+                    portfolio_title = request.json["portfolio_title"],
+                    portfolio_desc  = request.json["portfolio_desc"],
+                    date_created = request.json["date_created"],
+                    date_updated = request.json["date_updated"],
+                    user_id = request.json["user_id"]
+                )
+        
+        db.session.add(new_portfolio)
+        db.session.commit()
+        
+        return stockschema.dump([new_portfolio])
+
+api.add_resource (PortfolioListResource, '/portfolios' )
+
+class PortfolioResource (Resource):
+    def get (self, portfolio_id):
+        portfolio = Portfolio.query.get_or_404 (portfolio_id)
+        app.logger.info (portfolio)
+        return portfolioschema.dump([portfolio])
+        # return jsonify(stockschema.dump(stock)) 
+
+    def patch(self, portfolio_id):
+        portfolio = Portfolio.query.get_or_404(portfolio_id)
+        '''
+        if 'title' in request.json:
+            post.title = request.json['title']
+        if 'content' in request.json:
+            post.content = request.json['content']
+        '''
+        db.session.commit()
+        return portfolioschema.dump(portfolio)
+
+    def delete(self, portfolio_id):
+        portfolio = Portfolio.query.get_or_404(portfolio_id)
+        db.session.delete(portfolio)
+        db.session.commit()
+        return '', 204
+
+api.add_resource (PortfolioResource, '/portfolio/<int:portfolio_id>' )
 
 
 class StockListResource (Resource):

@@ -5,7 +5,7 @@ from sqlalchemy import BigInteger
 db = SQLAlchemy()
 
 class User(db.Model):
-    __tablename__ = 'Users'
+    __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     user_name = Column(String(40), nullable = False)
     user_pwd = Column(String(40), nullable = False)
@@ -16,7 +16,7 @@ class User(db.Model):
     portfolios = db.relationship('Portfolio', backref='user', lazy=True)
 
 class Portfolio (db.Model):
-    __tablename__ = 'Portfolio'
+    __tablename__ = 'portfolio'
     id = Column(Integer, primary_key=True)
     portfolio_title = Column(String(60), nullable = False)
     portfolio_desc = Column(String(120), nullable = False)
@@ -27,7 +27,7 @@ class Portfolio (db.Model):
     stocks = db.relationship('Stock', backref='portfolio', lazy=True)
 
 class Stock(db.Model):
-    __tablename__ = 'Stocks'
+    __tablename__ = 'stock'
     id = Column(Integer, primary_key=True)
     stock_symbol = Column(String(40))
     stock_company_URL = Column(String(40))
@@ -37,12 +37,11 @@ class Stock(db.Model):
     latest_price = Column (Float, nullable=False)
     cost_basis = Column (Float, nullable=False)
     gain_loss = Column (Float, nullable=False)
-    portfolio_id = db.Column(db.Integer, db.ForeignKey('portfolio.id'),
-        nullable=False)
+    portfolio_id = db.Column(db.Integer, db.ForeignKey('portfolio.id'), nullable=False)
 
 # Step 3: Create a model
 class FinanceData (db.Model):
-    __tablename__ = 'FinanceData'
+    __tablename__ = 'snpcompanies'
 
     id = Column ( Integer, primary_key=True)
     Symbol = Column (String(10), nullable=True)
@@ -62,7 +61,7 @@ class FinanceData (db.Model):
 
 # Step 3: Create a model
 class HistoricalData (db.Model):
-    __tablename__ = 'HistoricalData'
+    __tablename__ = 'historicaldata'
 
     id = Column ( Integer, primary_key=True)
     Symbol = Column (String(10), nullable=True)

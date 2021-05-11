@@ -1,8 +1,8 @@
 from flask import Flask, render_template
 #from models.portfolio import db, FinanceData
-from .initapp import db_seed, get_historical_data_db, get_historical_data_files, get_history_db
+from initapp import db_seed, get_historical_data_db, get_historical_data_files, get_history_db
 import logging
-from .models.portfolio import db, FinanceData
+from models.portfolio import db, FinanceData
 
 # ---------------------------
 # App initialization 
