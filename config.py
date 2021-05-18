@@ -12,7 +12,7 @@ class Config:
     SESSION_COOKIE_NAME = environ.get('SESSION_COOKIE_NAME')
     STATIC_FOLDER = 'static'
     TEMPLATES_FOLDER = 'templates'
-    SQLALCHEMY_DATABASE_URI = 'mysql://root2:password@localhost/nudgeM'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root2:password@localhost/nudgeMsrvr'
 
 
 class ProdConfig(Config):

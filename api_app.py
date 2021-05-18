@@ -4,16 +4,29 @@ from flask_restful import Api, Resource
 from flask_marshmallow import Marshmallow
 from models.portfolio import db, FinanceData, Stock, User, Portfolio
 import logging
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+import datetime
+
+
+# https://codeburst.io/jwt-authorization-in-flask-c63c1acf4eeb
+# https://dev.to/paurakhsharma/flask-rest-api-part-3-authentication-and-authorization-5935
 
 # ---------------------------
 # App initialization 
 # ---------------------------
 
 app = Flask(__name__)
-
 app.config.from_object('config.Config')
 
+# ---------------------------
+# API initialization 
+# ---------------------------
 api = Api(app) 
+
+# ---------------------------
+# Authentication initialization 
+# ---------------------------
+jwt = JWTManager(app)
 
 # ---------------------------
 # Logging initialization 
@@ -40,7 +53,6 @@ financeDataSchema = FinanceDataSchema(many=True)
 class UserSchema (ma.Schema):
     class Meta:
         fields = ("id","user_name","user_pwd","date_signed","status","user_email","user_phone")
-        #fields = ( "id","stock_symbol","stock_company_URL","purchase_date","purchase_price","volume","latest_price","cost_basis","gain_loss")
         model = User
 
 userschema = UserSchema ( )
@@ -70,11 +82,14 @@ stockschema = StockSchema (many=True)
 # ---------------------------
 
 class FinanceDataListResource(Resource):
+    # Make sure the user is authenticated
+    @jwt_required()
     def get(self):
         #stocks = db.session.query(FinanceData).all()
         snpList = FinanceData.query.all()
 
-        return jsonify(financeDataSchema.dump(snpList))
+        return financeDataSchema.dump(snpList)
+        #return jsonify(financeDataSchema.dump(snpList))
 
 api.add_resource(FinanceDataListResource, '/snpstockslist')
 
@@ -83,18 +98,22 @@ class PortfolioListResource (Resource):
         portfoliolist = Portfolio.query.all ()
         return jsonify(portfolioschema.dump(portfoliolist)) 
 
+    # Make sure the user is authenticated
+    @jwt_required()
     # Create new portfolio
     def post(self):
         print('Adding new Portfolio')
         app.logger.info(f'Received : {request.json}')
         app.logger.info(f'Received : {request.get_json()}')
 
+        # find the user id from JWT token
+        logged_user_id = get_jwt_identity()
         new_portfolio = Portfolio ( id=request.json["id"],
                     portfolio_title = request.json["portfolio_title"],
                     portfolio_desc  = request.json["portfolio_desc"],
                     date_created = request.json["date_created"],
                     date_updated = request.json["date_updated"],
-                    user_id = request.json["user_id"]
+                    user_id = logged_user_id #request.json["user_id"]
                 )
         
         db.session.add(new_portfolio)
@@ -187,6 +206,49 @@ class StockResource (Resource):
 
 api.add_resource (StockResource, '/stock/<int:stock_id>' )
 
+class UserResource (Resource):
+    def post(self):
+        print('Adding new User')
+        app.logger.info(f'New User Add : Received : {request.json}')
+
+        body= request.get_json()
+
+        app.logger.info(f'Received JSON: {body}')
+        #new_user = User (**body)
+
+        new_user = User(#id= request.json["id"],
+                        user_name= request.json["user_name"],
+                        user_pwd = request.json["user_pwd "],
+                        date_signed= request.json["date_signed"],
+                        status= request.json["status"],
+                        user_email= request.json["user_email"],
+                        user_phone= request.json["user_phone"]
+                    )
+        #portfolios= request.json["portfolios"]
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return userschema.dump([new_user])
+
+api.add_resource (UserResource, '/user' )
+
+class LoginResource(Resource):
+    def post(self):
+        body = request.get_json()
+
+        user = User.query.filter_by(user_name=request.json["user_name"]).first()
+
+        authorized = user.check_password(request.json["user_pwd"])
+
+        if not authorized:
+            return {'error': 'User name or password invalid'}, 401
+ 
+        expires = datetime.timedelta(days=7)
+        access_token = create_access_token(identity=str(user.id), expires_delta=expires)
+        return {'token': access_token}, 200
+
+api.add_resource (LoginResource, '/login' )
 
 # ---------------------------
 # Routes  for error handling and index redirect

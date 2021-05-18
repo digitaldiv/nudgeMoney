@@ -6,7 +6,7 @@ db = SQLAlchemy()
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     user_name = Column(String(40), nullable = False)
     user_pwd = Column(String(40), nullable = False)
     date_signed = Column(Date, nullable = False)
@@ -15,9 +15,16 @@ class User(db.Model):
     user_phone = Column(String(40), nullable = False)
     portfolios = db.relationship('Portfolio', backref='user', lazy=True)
 
+    def check_password(self, pwd):
+        if self.user_pwd == pwd:
+            return True
+        else:
+            return False
+
+
 class Portfolio (db.Model):
     __tablename__ = 'portfolio'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     portfolio_title = Column(String(60), nullable = False)
     portfolio_desc = Column(String(120), nullable = False)
     date_created = Column(Date, nullable = False)
@@ -28,7 +35,7 @@ class Portfolio (db.Model):
 
 class Stock(db.Model):
     __tablename__ = 'stock'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     stock_symbol = Column(String(40))
     stock_company_URL = Column(String(40))
     purchase_date = Column(Date, nullable = False)
